@@ -1,5 +1,7 @@
 interface TableOptions {
   padding?: number
+  upcaseHeader?: boolean
+  emptyReplacer?: string
 }
 
 /** TODO */
@@ -11,14 +13,10 @@ export function table(
   header: string[],
   opts?: TableOptions
 ): string {
-  /*
-    validate inputs
-  */
+  // validate inputs
 
   const cols = takeCols(data, header)
-  // console.log(cols)
-  const rows = makeRows(cols) // pass the padding
-  // console.log(rows)
+  const rows = makeRows(cols, opts?.padding)
 
   return rows.map(x => x.trimEnd()).join('\n')
 }
@@ -27,10 +25,10 @@ function takeCols(data: Datum[], header: string[]): string[][] {
   const cols: string[][] = []
 
   header.forEach((key, idx) => {
-    cols.push([key])
+    cols.push([key]) // upcaseHeader
     for (const datum of data) {
       if (datum.hasOwnProperty(key)) {
-        cols[idx].push(datum[key].toString())
+        cols[idx].push(datum[key]?.toString() || '') // emptyReplacer
       }
     }
   })
@@ -39,16 +37,17 @@ function takeCols(data: Datum[], header: string[]): string[][] {
 }
 
 function makeRows(cols: string[][], padding: number = 2) {
-  const widths = cols.map(col => Math.max(...col.map(x => x.length)))
-  // console.log(widths)
+  const maxWidths = cols.map(col => Math.max(...col.map(x => x.length)))
+  const rowsCount = cols[0].length
   const rows: string[] = []
 
-  for (let i = 0; i < cols[0].length; i++) {
+  for (let row = 0; row < rowsCount; row++) {
     rows.push(
       cols
-        .map(col => col[i])
+        .map(col => col[row])
         .reduce(
-          (prev, curr, idx) => (prev += curr.padEnd(widths[idx] + padding)), // trim here?
+          (memo, value, colIdx) =>
+            (memo += value.padEnd(maxWidths[colIdx] + padding)),
           ''
         )
     )
