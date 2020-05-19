@@ -16,15 +16,10 @@ test('it formats an array of objects into a simple, flexible table', () => {
     { foo: 'ffff', bar: 'bbbb' },
   ]
   assertEquals('bar   foo\nbbb   fff\nbbbb  ffff', table(data, ['bar', 'foo']))
-})
 
-// console.log(
-//   table(
-//     [
-//       { cat: 'sophie', age: 19 },
-//       { cat: 'margot', age: 12 },
-//       { cat: 'leopoldo', age: 1 },
-//     ],
-//     ['cat', 'age']
-//   )
-// )
+  data = [{ a: 'A', b: 'B', c: 'C' }]
+  assertEquals('a  c  b\nA  C  B', table(data, ['a', 'c', 'b']))
+
+  data = []
+  assertEquals('foo', table(data, ['foo']))
+})

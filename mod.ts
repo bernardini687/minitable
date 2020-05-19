@@ -17,7 +17,7 @@ export function table(
 
   const cols = takeCols(data, header)
   // console.log(cols)
-  const rows = makeRows(cols) // padding
+  const rows = makeRows(cols) // pass the padding
   // console.log(rows)
 
   return rows.map(x => x.trimEnd()).join('\n')
@@ -26,11 +26,11 @@ export function table(
 function takeCols(data: Datum[], header: string[]): string[][] {
   const cols: string[][] = []
 
-  header.forEach((key, i) => {
+  header.forEach((key, idx) => {
     cols.push([key])
     for (const datum of data) {
       if (datum.hasOwnProperty(key)) {
-        cols[i].push(datum[key].toString())
+        cols[idx].push(datum[key].toString())
       }
     }
   })
@@ -48,7 +48,7 @@ function makeRows(cols: string[][], padding: number = 2) {
       cols
         .map(col => col[i])
         .reduce(
-          (prev, curr, i) => (prev += curr.padEnd(widths[i] + padding)), // trim here?
+          (prev, curr, idx) => (prev += curr.padEnd(widths[idx] + padding)), // trim here?
           ''
         )
     )
