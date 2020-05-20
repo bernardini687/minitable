@@ -30,7 +30,7 @@ test('it overwrites the default padding', () => {
 
 test('it does not complain when passed empty data', () => {
   const data: Datum[] = []
-  assertEquals('foo', table(data, ['foo']))
+  assertEquals('foo  bar', table(data, ['foo', 'bar']))
 })
 
 test('it simply does not display null or undefined values', () => {
@@ -44,6 +44,21 @@ test('it simply does not display null or undefined values', () => {
   )
 })
 
-// TODO: unhappy path
+test('it ignores discrepancies between data properties and passed header', () => {
+  const data = [
+    { item: 'potato', id: 1 },
+    { item: 'tomato', id: 2 },
+  ]
+
+  // id  item
+  // 1   potato
+  // 2   tomato
+  assertEquals(
+    'id  item\n1   potato\n2   tomato',
+    table(data, ['foo', 'id', 'bar', 'item'])
+  )
+})
+
+// USER ERROR: DATA NOT CONSISTENT!
 // data = [{ foo: 'fff', bar: 'bbb' }, { bar: 'bbbb' }]
 // assertEquals('bar   foo\nbbb   fff\n      ffff', table(data, ['bar', 'foo']))

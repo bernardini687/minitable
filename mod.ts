@@ -13,22 +13,41 @@ export function table(
   header: string[],
   opts?: TableOptions
 ): string {
-  // validate inputs
+  const pad = opts?.padding || 2
 
-  const cols = takeCols(data, header)
-  const rows = makeRows(cols, opts?.padding)
+  // validate inputs
+  if (!data.length) {
+    return header.join(' '.repeat(pad))
+  }
+  const validHeader = intersect(Object.keys(data[0]), header)
+  console.log(validHeader)
+
+  const cols = takeCols(data, validHeader)
+  const rows = makeRows(cols, pad)
 
   return rows.map(x => x.trimEnd()).join('\n')
 }
 
-function takeCols(data: Datum[], header: string[]): string[][] {
+/*
+  HELPERS
+*/
+
+function intersect(a: string[], b: string[]) {
+  // keep original order of `b`
+  const setA = new Set(a)
+  const intersection = new Set(b.filter(e => setA.has(e)))
+
+  return Array.from(intersection)
+}
+
+function takeCols(data: Datum[], header: string[]) {
   const cols: string[][] = []
 
   header.forEach((key, idx) => {
-    cols.push([key]) // upcaseHeader
+    cols.push([key]) // TODO: upcaseHeader
     for (const datum of data) {
       if (datum.hasOwnProperty(key)) {
-        cols[idx].push(datum[key]?.toString() || '') // emptyReplacer
+        cols[idx].push(datum[key]?.toString() || '') // TODO: emptyReplacer
       }
     }
   })
@@ -36,7 +55,7 @@ function takeCols(data: Datum[], header: string[]): string[][] {
   return cols
 }
 
-function makeRows(cols: string[][], padding: number = 2) {
+function makeRows(cols: string[][], pad: number) {
   const maxWidths = cols.map(col => Math.max(...col.map(x => x.length)))
   const rowsCount = cols[0].length
   const rows: string[] = []
@@ -47,7 +66,7 @@ function makeRows(cols: string[][], padding: number = 2) {
         .map(col => col[row])
         .reduce(
           (memo, value, colIdx) =>
-            (memo += value.padEnd(maxWidths[colIdx] + padding)),
+            (memo += value.padEnd(maxWidths[colIdx] + pad)),
           ''
         )
     )
