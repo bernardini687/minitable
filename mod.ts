@@ -15,12 +15,15 @@ export function table(
 ): string {
   const pad = opts?.padding || 2
 
-  // validate inputs
-  if (!data.length) {
+  if (!data.length || !header.length) {
     return header.join(' '.repeat(pad))
   }
+
   const validHeader = intersect(Object.keys(data[0]), header)
-  console.log(validHeader)
+
+  if (!validHeader.length) {
+    throw new Error('Given header does not match any datum property!')
+  }
 
   const cols = takeCols(data, validHeader)
   const rows = makeRows(cols, pad)
@@ -48,6 +51,8 @@ function takeCols(data: Datum[], header: string[]) {
     for (const datum of data) {
       if (datum.hasOwnProperty(key)) {
         cols[idx].push(datum[key]?.toString() || '') // TODO: emptyReplacer
+      } else {
+        throw new Error(`No property '${key}' in one of the given data!`)
       }
     }
   })

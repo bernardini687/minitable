@@ -1,4 +1,7 @@
-import { assertEquals } from 'https://deno.land/std/testing/asserts.ts'
+import {
+  assertEquals,
+  assertThrows,
+} from 'https://deno.land/std/testing/asserts.ts'
 import { table, Datum } from './mod.ts'
 
 const { test } = Deno
@@ -33,7 +36,12 @@ test('it does not complain when passed empty data', () => {
   assertEquals('foo  bar', table(data, ['foo', 'bar']))
 })
 
-test('it simply does not display null or undefined values', () => {
+test('it does not complain when passed empty header', () => {
+  const data = [{ foo: 0, bar: 1 }]
+  assertEquals('', table(data, []))
+})
+
+test('it does not display null or undefined values', () => {
   const data = [
     { foo: 'fff', bar: undefined, baz: 'zzzzz' },
     { bar: 'bbbb', foo: null, baz: '' },
@@ -49,16 +57,48 @@ test('it ignores discrepancies between data properties and passed header', () =>
     { item: 'potato', id: 1 },
     { item: 'tomato', id: 2 },
   ]
-
-  // id  item
-  // 1   potato
-  // 2   tomato
+  /*
+    id  item
+    1   potato
+    2   tomato
+  */
   assertEquals(
     'id  item\n1   potato\n2   tomato',
     table(data, ['foo', 'id', 'bar', 'item'])
   )
 })
 
-// USER ERROR: DATA NOT CONSISTENT!
-// data = [{ foo: 'fff', bar: 'bbb' }, { bar: 'bbbb' }]
-// assertEquals('bar   foo\nbbb   fff\n      ffff', table(data, ['bar', 'foo']))
+test('it throws on non-consistent data', () => {
+  let data: Datum[] = [
+    { foo: 0, bar: 1 },
+    { foo: 1, gnu: 0 },
+  ]
+  assertThrows(
+    () => {
+      table(data, ['foo', 'bar'])
+    },
+    Error,
+    "No property 'bar'"
+  )
+
+  data = [
+    { foo: 0, gnu: 0 },
+    { bar: 1, baz: 0 },
+  ]
+  assertThrows(
+    () => {
+      table(data, ['gnu'])
+    },
+    Error,
+    "No property 'gnu'"
+  )
+
+  data = [{ foo: 0 }, { foo: 1, gnu: 0 }]
+  assertThrows(
+    () => {
+      table(data, ['gnu'])
+    },
+    Error,
+    'Given header does not match'
+  )
+})
