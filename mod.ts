@@ -4,10 +4,14 @@ interface TableOptions {
   emptyReplacer?: string
 }
 
-/** TODO */
-export type Datum = Record<string, any>
+type Datum = Record<string, any>
 
-/** TODO */
+/**
+ * Build a flexible table from a list of objects
+ * @param data Data to print
+ * @param header Desired header of the table
+ * @param options Modify the padding, upcase the header, set empty values replacer
+ */
 export function table(data: Datum[], header: string[], opts?: TableOptions): string {
   const pad = opts?.padding || 2
   const upcase = opts?.upcaseHeader || false // undefined

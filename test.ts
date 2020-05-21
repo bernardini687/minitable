@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from 'https://deno.land/std/testing/asserts.ts'
-import { table, Datum } from './mod.ts'
+import { table } from './mod.ts'
 
 const { test } = Deno
 
@@ -80,7 +80,7 @@ test('it behaves as usual when passed default options', () => {
 })
 
 test('it does not complain when given empty data', () => {
-  const data: Datum[] = []
+  const data: Record<string, any>[] = []
   assertEquals('foo  bar', table(data, ['foo', 'bar']))
 })
 
@@ -122,7 +122,7 @@ test('it ignores discrepancies between data properties and given header', () => 
 })
 
 test('it throws on non-consistent data', () => {
-  let data: Datum[] = [
+  let data: Record<string, any>[] = [
     { foo: 0, bar: 1 },
     { foo: 1, gnu: 0 },
   ]
