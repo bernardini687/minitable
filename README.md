@@ -1,6 +1,6 @@
 # minitable
 
-_shape a list of data into a table string_
+_shape a list of data into a table_
 
 simple helper to get a string designed to be printed as a table.
 
