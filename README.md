@@ -7,7 +7,7 @@ simple helper to get a string designed to be printed as a table.
 # usage
 
 ```ts
-import { table } from 'https://deno.land/x/minitable/mod.ts'
+import { table } from 'https://deno.land/x/minitable@v1.0/mod.ts'
 
 const fruits = [
   { name: 'mango', color: 'orange', quantity: 3 },
